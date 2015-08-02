@@ -94,7 +94,7 @@ static void mqttDataCb(uint32_t *args, const char* topic, uint32_t topic_len, co
 //------------------------------------------------------------------------------------
 // MQTT class implementation
 //------------------------------------------------------------------------------------
-MQTT::MQTT(const char* client_id, const char* host, uint32_t port, uint8_t security) :
+MQTT::MQTT(const char* client_id, const char* host, uint32_t port) :
 	onMqttConnectedCb(0)
 	,onMqttDisconnectedCb(0)
 	,onMqttPublishedCb(0)
@@ -102,7 +102,7 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port, uint8_t secur
 	,onMqttDataRawCb(0)
 {
 	// init connections
-	MQTT_InitConnection(&mqttClient, host, port, security);
+	MQTT_InitConnection(&mqttClient, host, port);
 
 	// init client
 	MQTT_InitClient(&mqttClient, client_id, "", "", 120, 1);

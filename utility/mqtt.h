@@ -137,7 +137,7 @@ typedef struct  {
 #define MQTT_EVENT_TYPE_EXITED 			7
 #define MQTT_EVENT_TYPE_PUBLISH_CONTINUATION 8
 
-void ICACHE_FLASH_ATTR MQTT_InitConnection(MQTT_Client *mqttClient, const char* host, uint32 port, uint8_t security);
+void ICACHE_FLASH_ATTR MQTT_InitConnection(MQTT_Client *mqttClient, const char* host, uint32 port);
 void ICACHE_FLASH_ATTR MQTT_InitClient(MQTT_Client *mqttClient, const char* client_id, const char* client_user, const char* client_pass, uint32_t keepAliveTime, uint8_t cleanSession);
 void ICACHE_FLASH_ATTR MQTT_InitLWT(MQTT_Client *mqttClient, const char* will_topic, const char* will_msg, uint8_t will_qos, uint8_t will_retain);
 

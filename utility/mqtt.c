@@ -80,12 +80,7 @@ mqtt_dns_found(const char *name, ip_addr_t *ipaddr, void *arg)
 	if(client->ip.addr == 0 && ipaddr->addr != 0)
 	{
 		os_memcpy(client->pCon->proto.tcp->remote_ip, &ipaddr->addr, 4);
-		if(client->security){
-			espconn_secure_connect(client->pCon);
-		}
-		else {
-			espconn_connect(client->pCon);
-		}
+		espconn_connect(client->pCon);
 
 		client->connState = TCP_CONNECTING;
 		INFO("TCP: connecting...\r\n");
@@ -142,12 +137,7 @@ READPACKET:
 			if(msg_type == MQTT_MSG_TYPE_CONNACK){
 				if(client->mqtt_state.pending_msg_type != MQTT_MSG_TYPE_CONNECT){
 					INFO("MQTT: Invalid packet\r\n");
-					if(client->security){
-						espconn_secure_disconnect(client->pCon);
-					}
-					else {
-						espconn_disconnect(client->pCon);
-					}
+					espconn_disconnect(client->pCon);
 				} else {
 					INFO("MQTT: Connected to %s:%d\r\n", client->host, client->port);
 					client->connState = MQTT_DATA;
@@ -283,12 +273,7 @@ void ICACHE_FLASH_ATTR mqtt_timer(void *arg)
 
 			client->sendTimeout = MQTT_SEND_TIMOUT;
 			INFO("MQTT: Sending, type: %d, id: %04X\r\n",client->mqtt_state.pending_msg_type, client->mqtt_state.pending_msg_id);
-			if(client->security){
-				espconn_secure_sent(client->pCon, client->mqtt_state.outbound_message->data, client->mqtt_state.outbound_message->length);
-			}
-			else{
-				espconn_sent(client->pCon, client->mqtt_state.outbound_message->data, client->mqtt_state.outbound_message->length);
-			}
+			espconn_sent(client->pCon, client->mqtt_state.outbound_message->data, client->mqtt_state.outbound_message->length);
 
 			client->mqtt_state.outbound_message = NULL;
 
@@ -348,12 +333,7 @@ mqtt_tcpclient_connect_cb(void *arg)
 
 	client->sendTimeout = MQTT_SEND_TIMOUT;
 	INFO("MQTT: Sending, type: %d, id: %04X\r\n",client->mqtt_state.pending_msg_type, client->mqtt_state.pending_msg_id);
-	if(client->security){
-		espconn_secure_sent(client->pCon, client->mqtt_state.outbound_message->data, client->mqtt_state.outbound_message->length);
-	}
-	else{
-		espconn_sent(client->pCon, client->mqtt_state.outbound_message->data, client->mqtt_state.outbound_message->length);
-	}
+	espconn_sent(client->pCon, client->mqtt_state.outbound_message->data, client->mqtt_state.outbound_message->length);
 
 	client->mqtt_state.outbound_message = NULL;
 	client->connState = MQTT_CONNECT_SENDING;
@@ -470,12 +450,7 @@ MQTT_Task(os_event_t *e)
 
 			client->sendTimeout = MQTT_SEND_TIMOUT;
 			INFO("MQTT: Sending, type: %d, id: %04X\r\n",client->mqtt_state.pending_msg_type, client->mqtt_state.pending_msg_id);
-			if(client->security){
-				espconn_secure_sent(client->pCon, dataBuffer, dataLen);
-			}
-			else{
-				espconn_sent(client->pCon, dataBuffer, dataLen);
-			}
+			espconn_sent(client->pCon, dataBuffer, dataLen);
 
 			client->mqtt_state.outbound_message = NULL;
 			break;
@@ -489,11 +464,10 @@ MQTT_Task(os_event_t *e)
   * @param  client: 	MQTT_Client reference
   * @param  host: 	Domain or IP string
   * @param  port: 	Port to connect
-  * @param  security:		1 for ssl, 0 for none
   * @retval None
   */
 void ICACHE_FLASH_ATTR
-MQTT_InitConnection(MQTT_Client *mqttClient, const char* host, uint32 port, uint8_t security)
+MQTT_InitConnection(MQTT_Client *mqttClient, const char* host, uint32 port)
 {
 	uint32_t temp;
 	INFO("MQTT_InitConnection\r\n");
@@ -506,7 +480,7 @@ MQTT_InitConnection(MQTT_Client *mqttClient, const char* host, uint32 port, uint
 	mqttClient->host[temp] = 0;
 
 	mqttClient->port = port;
-	mqttClient->security = security;
+	mqttClient->security = 0;
 
 }
 
@@ -671,12 +645,7 @@ MQTT_Connect(MQTT_Client *mqttClient)
 
 	if(UTILS_StrToIP(mqttClient->host, &mqttClient->pCon->proto.tcp->remote_ip)) {
 		INFO("TCP: Connect to ip  %s:%d\r\n", mqttClient->host, mqttClient->port);
-		if(mqttClient->security){
-			espconn_secure_connect(mqttClient->pCon);
-		}
-		else {
-			espconn_connect(mqttClient->pCon);
-		}
+		espconn_connect(mqttClient->pCon);
 	}
 	else {
 		INFO("TCP: Connect to domain %s:%d\r\n", mqttClient->host, mqttClient->port);
