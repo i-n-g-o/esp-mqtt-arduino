@@ -12,4 +12,4 @@ Original code for contiki: https://github.com/esar/contiki-mqtt
 
 **secure libssl:**
 
-If you want to use secure communication, please use the secure-branch!
+If you want to use secure communication, please use the `secure`-branch!
