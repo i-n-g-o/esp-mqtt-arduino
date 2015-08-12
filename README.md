@@ -22,6 +22,7 @@ compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -l
 
 If the esp8266 boards has been added via the Arduino board manager you find "platform.txt" here:
 ```
-OSX: ~/Library/Arduino15/packages/esp8266/hardware/esp8266/version/platform.txt
+OSX: ~/Library/Arduino15/packages/esp8266/hardware/esp8266/*version*/platform.txt
+Linux: ~/.arduino15/packages/esp8266/hardware/esp8266/*version*/platform.txt
 Windows: C:\Users\*username*\AppData\Romaning\Arduino15\packages\esp8266\hardware\esp8266\version\platform.txt
 ```
