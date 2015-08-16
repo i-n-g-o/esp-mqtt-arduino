@@ -159,16 +159,29 @@ bool MQTT::isConnected()
 
 /*
  */
-bool MQTT::publish(const char* topic, const char* buf, uint32_t buf_len, int qos, int retain) {
-	
+bool MQTT::publish(const char* topic, const char* buf, uint32_t buf_len, int qos, int retain)
+{
 	return MQTT_Publish(&mqttClient, topic, buf, buf_len, qos, retain);
 }
 
 bool MQTT::publish(String& topic, String& data, int qos, int retain)
 {
-	return MQTT_Publish(&mqttClient, topic.c_str(), data.c_str(), data.length(), qos, retain);
+	return publish(topic.c_str(), data.c_str(), data.length(), qos, retain);
 }
 
+bool MQTT::publish(String& topic, const char* buf, uint32_t buf_len, int qos, int retain)
+{
+	return publish(topic.c_str(), buf, buf_len, qos, retain);
+}
+
+bool MQTT::publish(const char* topic, String& data, int qos, int retain)
+{
+	return publish(topic, data.c_str(), data.length(), qos, retain);
+}
+
+
+/*
+ */
 bool MQTT::subscribe(const char* topic, uint8_t qos)
 {
 	return MQTT_Subscribe(&mqttClient, (char*)topic, qos);
