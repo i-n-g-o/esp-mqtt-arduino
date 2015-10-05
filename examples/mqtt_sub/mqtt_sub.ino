@@ -12,6 +12,7 @@ MQTT myMqtt(CLIENT_ID, "192.168.1.50", 1883);
 const char* ssid     = "ssid";
 const char* password = "ssid_password";
 
+boolean bIsConnected = false;
 
 //
 void setup() {
@@ -47,14 +48,18 @@ void setup() {
   Serial.println("connect mqtt...");
   myMqtt.connect();
 
-  Serial.println("subscribe to topic...");
-  myMqtt.subscribe(TOPIC);
-
   delay(10);
 }
 
 //
 void loop() {
+
+  if (!bIsConnected) {
+    // try to connect to mqtt server
+    myMqtt.connect();
+    delay(100);
+  }
+  
 }
 
 
@@ -63,12 +68,15 @@ void loop() {
  */
 void myConnectedCb() {
   Serial.println("connected to MQTT server");
+  bIsConnected = true;
+
+  Serial.println("subscribe to topic...");
+  myMqtt.subscribe(TOPIC);
 }
 
 void myDisconnectedCb() {
   Serial.println("disconnected. try to reconnect...");
-  delay(500);
-  myMqtt.connect();
+  bIsConnected = false;
 }
 
 void myPublishedCb() {
