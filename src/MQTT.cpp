@@ -30,16 +30,6 @@
 #include "osapi.h"
 #include "os_type.h"
 
-//needed?
-//#include <stdlib.h>
-//extern "C" {
-//#include "ets_sys.h"
-//#include "os_type.h"
-//#include "osapi.h"
-//#include "mem.h"
-//#include "user_interface.h"
-//}
-
 
 //------------------------------------------------------------------------------------
 // mqtt internal callbacks
@@ -89,6 +79,16 @@ static void mqttDataCb(uint32_t *args, const char* topic, uint32_t topic_len, co
 	}
 }
 
+static void mqttTimeoutCb(uint32_t *args)
+{
+	MQTT_Client* client = (MQTT_Client*)args;
+	
+	MQTT* _this = (MQTT*)client->user_data;
+	
+//	if (_this && _this->onMqttTimeoutCb) {
+//		_this->onMqttTimeoutCb();
+//	}
+}
 
 
 //------------------------------------------------------------------------------------
@@ -118,6 +118,8 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port) :
 	MQTT_OnDisconnected(&mqttClient, mqttDisconnectedCb);
 	MQTT_OnPublished(&mqttClient, mqttPublishedCb);
 	MQTT_OnData(&mqttClient, mqttDataCb);
+	
+	MQTT_OnTimeout(&mqttClient, mqttTimeoutCb);
 }
 
 

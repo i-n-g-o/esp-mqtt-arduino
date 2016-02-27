@@ -111,6 +111,7 @@ typedef struct  {
 	MqttCallback disconnectedCb;
 	MqttCallback publishedCb;
 	MqttDataCallback dataCb;
+	MqttCallback timeoutCb;
 	ETSTimer mqttTimer;
 	uint32_t keepAliveTick;
 	uint32_t reconnectTick;
@@ -148,6 +149,7 @@ void ICACHE_FLASH_ATTR MQTT_OnConnected(MQTT_Client *mqttClient, MqttCallback co
 void ICACHE_FLASH_ATTR MQTT_OnDisconnected(MQTT_Client *mqttClient, MqttCallback disconnectedCb);
 void ICACHE_FLASH_ATTR MQTT_OnPublished(MQTT_Client *mqttClient, MqttCallback publishedCb);
 void ICACHE_FLASH_ATTR MQTT_OnData(MQTT_Client *mqttClient, MqttDataCallback dataCb);
+void ICACHE_FLASH_ATTR MQTT_OnTimeout(MQTT_Client *mqttClient, MqttCallback timeoutCb);
 
 void ICACHE_FLASH_ATTR MQTT_Connect(MQTT_Client *mqttClient);
 void ICACHE_FLASH_ATTR MQTT_Disconnect(MQTT_Client *mqttClient);

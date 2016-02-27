@@ -284,9 +284,14 @@ void ICACHE_FLASH_ATTR mqtt_timer(void *arg)
 	} else if(client->connState == TCP_RECONNECT_REQ){
 		client->reconnectTick ++;
 		if(client->reconnectTick > MQTT_RECONNECT_TIMEOUT) {
+			
 			client->reconnectTick = 0;
 			client->connState = TCP_RECONNECT;
 			system_os_post(MQTT_TASK_PRIO, 0, (os_param_t)client);
+			
+			if (client->timeoutCb) {
+				client->timeoutCb((uint32_t*)client);
+			}
 		}
 	}
 	if(client->sendTimeout > 0)
@@ -690,6 +695,13 @@ MQTT_OnPublished(MQTT_Client *mqttClient, MqttCallback publishedCb)
 {
 	mqttClient->publishedCb = publishedCb;
 }
+
+void ICACHE_FLASH_ATTR
+MQTT_OnTimeout(MQTT_Client *mqttClient, MqttCallback timeoutCb)
+{
+	mqttClient->timeoutCb = timeoutCb;
+}
+
 
 void ICACHE_FLASH_ATTR
 MQTT_Free(MQTT_Client *client)
