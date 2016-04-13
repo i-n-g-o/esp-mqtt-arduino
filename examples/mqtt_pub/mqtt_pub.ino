@@ -1,17 +1,20 @@
 #include <ESP8266WiFi.h>
 #include <MQTT.h>
 
+void myDataCb(String& topic, String& data);
+void myPublishedCb();
+void myDisconnectedCb();
+void myConnectedCb();
 
 #define CLIENT_ID "client1"
 
 // create MQTT object
-MQTT myMqtt(CLIENT_ID, "192.168.1.50", 1883);
+MQTT myMqtt(CLIENT_ID, "192.168.0.1", 1883);
 
 //
 const char* ssid     = "ssid";
 const char* password = "ssid_password";
 
-boolean bIsConnected = false;
 
 //
 void setup() {
@@ -43,50 +46,52 @@ void setup() {
   myMqtt.onPublished(myPublishedCb);
   myMqtt.onData(myDataCb);
   
+  Serial.println("connect mqtt...");
+  myMqtt.connect();
+
   delay(10);
 }
 
 //
 void loop() {
 
-  if (bIsConnected) {
-    int value = analogRead(A0);
+  int value = analogRead(A0);
+
+  String topic("/");
+  topic += CLIENT_ID;
+  topic += "/value";
   
-    String topic("/");
-    topic += CLIENT_ID;
-    topic += "/value";
+  String valueStr(value);
+
+  // publish value to topic
+  boolean result = myMqtt.publish(topic, valueStr);
     
-    String valueStr(value);
-  
-    // publish value to topic
-    boolean result = myMqtt.publish(topic, valueStr);
-  } else {
-    // try to connect to mqtt server
-    myMqtt.connect();
-  }
-  
-  delay(100);
+  delay(1000);
 }
 
 
 /*
  * 
  */
-void myConnectedCb() {
+void myConnectedCb()
+{
   Serial.println("connected to MQTT server");
-  bIsConnected = true;
 }
 
-void myDisconnectedCb() {
+void myDisconnectedCb()
+{
   Serial.println("disconnected. try to reconnect...");
-  bIsConnected = false;
+  delay(500);
+  myMqtt.connect();
 }
 
-void myPublishedCb() {
+void myPublishedCb()
+{
   //Serial.println("published.");
 }
 
-void myDataCb(String& topic, String& data) {
+void myDataCb(String& topic, String& data)
+{
   
   Serial.print(topic);
   Serial.print(": ");
