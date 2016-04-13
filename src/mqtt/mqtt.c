@@ -29,6 +29,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <stddef.h>
+
 #include "user_interface.h"
 #include "osapi.h"
 #include "espconn.h"
@@ -48,10 +50,10 @@
 #define QUEUE_BUFFER_SIZE		 	2048
 #endif
 
-unsigned char *default_certificate;
-unsigned int default_certificate_len = 0;
-unsigned char *default_private_key;
-unsigned int default_private_key_len = 0;
+//unsigned char *default_certificate;
+//unsigned int default_certificate_len = 0;
+//unsigned char *default_private_key;
+//unsigned int default_private_key_len = 0;
 
 os_event_t mqtt_procTaskQueue[MQTT_TASK_QUEUE_SIZE];
 
