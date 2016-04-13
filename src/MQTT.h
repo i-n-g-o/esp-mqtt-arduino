@@ -36,6 +36,7 @@
 #include <string.h>
 
 extern "C" {
+	#include <stddef.h>
 	#include "mqtt/mqtt.h"
 }
 
