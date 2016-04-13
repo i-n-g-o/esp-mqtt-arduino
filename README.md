@@ -20,9 +20,16 @@ In the file `hardware/esp8266com/esp8266/platform.txt` add `-lssl` to the line s
 compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig -lwps -lcrypto -lssl
 ```
 
+For it to work with more current releases of arduino-esp you might also remove `-laxtls` so it looks like this:
+```
+compiler.c.elf.libs=-lm -lgcc -lhal -lphy -lpp -lnet80211 -llwip -lwpa -lcrypto -lmain -lwps -lsmartconfig -lmesh -lssl
+```
+
+
 If the esp8266 boards has been added via the Arduino board manager you find "platform.txt" here:
 ```
 OSX: ~/Library/Arduino15/packages/esp8266/hardware/esp8266/*version*/platform.txt
 Linux: ~/.arduino15/packages/esp8266/hardware/esp8266/*version*/platform.txt
 Windows: C:\Users\*username*\AppData\Romaning\Arduino15\packages\esp8266\hardware\esp8266\version\platform.txt
 ```
+
