@@ -102,13 +102,13 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port, uint8_t secur
 	,onMqttDataRawCb(0)
 {
 	// init connections
-	MQTT_InitConnection(&mqttClient, host, port, security);
+	MQTT_InitConnection(&mqttClient, (uint8_t*)host, port, security);
 
 	// init client
-	MQTT_InitClient(&mqttClient, client_id, "", "", 120, 1);
+	MQTT_InitClient(&mqttClient, (uint8_t*)client_id, (uint8_t*)"", (uint8_t*)"", 120, 1);
 
 	// init LWT
-	MQTT_InitLWT(&mqttClient, "/lwt", "offline", 0, 0);
+	MQTT_InitLWT(&mqttClient, (uint8_t*)"/lwt", (uint8_t*)"offline", 0, 0);
 
 	// set user data
 	mqttClient.user_data = (void*)this;
@@ -123,7 +123,7 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port, uint8_t secur
 
 MQTT::~MQTT()
 {
-	MQTT_Free(&mqttClient);
+	mqtt_client_delete(&mqttClient);
 }
 
 

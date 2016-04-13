@@ -30,9 +30,7 @@
 
 #ifndef USER_QUEUE_H_
 #define USER_QUEUE_H_
-
 #include <stddef.h>
-
 #include "os_type.h"
 #include "ringbuf.h"
 typedef struct {
