@@ -29,6 +29,7 @@
 #include "user_interface.h"
 #include "osapi.h"
 #include "os_type.h"
+#include "mqtt/debug.h"
 
 
 //------------------------------------------------------------------------------------
@@ -105,7 +106,9 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port) :
 	MQTT_InitConnection(&mqttClient, host, port);
 
 	// init client
-	MQTT_InitClient(&mqttClient, (uint8_t*)client_id, (uint8_t*)"", (uint8_t*)"", 120, 1);
+	if ( !MQTT_InitClient(&mqttClient, (uint8_t*)client_id, (uint8_t*)"", (uint8_t*)"", 120, 1) ) {
+		INFO("Failed to initialize properly. Check MQTT version.\r\n");
+	}
 
 	// init LWT
 	MQTT_InitLWT(&mqttClient, (uint8_t*)"/lwt", (uint8_t*)"offline", 0, 0);
