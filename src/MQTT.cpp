@@ -29,16 +29,7 @@
 #include "user_interface.h"
 #include "osapi.h"
 #include "os_type.h"
-
-//needed?
-//#include <stdlib.h>
-//extern "C" {
-//#include "ets_sys.h"
-//#include "os_type.h"
-//#include "osapi.h"
-//#include "mem.h"
-//#include "user_interface.h"
-//}
+#include "mqtt/debug.h"
 
 
 //------------------------------------------------------------------------------------
@@ -89,6 +80,16 @@ static void mqttDataCb(uint32_t *args, const char* topic, uint32_t topic_len, co
 	}
 }
 
+static void mqttTimeoutCb(uint32_t *args)
+{
+	MQTT_Client* client = (MQTT_Client*)args;
+	
+	MQTT* _this = (MQTT*)client->user_data;
+	
+//	if (_this && _this->onMqttTimeoutCb) {
+//		_this->onMqttTimeoutCb();
+//	}
+}
 
 
 //------------------------------------------------------------------------------------
@@ -105,7 +106,9 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port, uint8_t secur
 	MQTT_InitConnection(&mqttClient, (uint8_t*)host, port, security);
 
 	// init client
-	MQTT_InitClient(&mqttClient, (uint8_t*)client_id, (uint8_t*)"", (uint8_t*)"", 120, 1);
+	if ( !MQTT_InitClient(&mqttClient, (uint8_t*)client_id, (uint8_t*)"", (uint8_t*)"", 120, 1) ) {
+		MQTT_INFO("Failed to initialize properly. Check MQTT version.\r\n");
+	}
 
 	// init LWT
 	MQTT_InitLWT(&mqttClient, (uint8_t*)"/lwt", (uint8_t*)"offline", 0, 0);
@@ -118,12 +121,14 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port, uint8_t secur
 	MQTT_OnDisconnected(&mqttClient, mqttDisconnectedCb);
 	MQTT_OnPublished(&mqttClient, mqttPublishedCb);
 	MQTT_OnData(&mqttClient, mqttDataCb);
+	
+	MQTT_OnTimeout(&mqttClient, mqttTimeoutCb);
 }
 
 
 MQTT::~MQTT()
 {
-	mqtt_client_delete(&mqttClient);
+	MQTT_DeleteClient(&mqttClient);
 }
 
 
@@ -159,16 +164,29 @@ bool MQTT::isConnected()
 
 /*
  */
-bool MQTT::publish(const char* topic, const char* buf, uint32_t buf_len, int qos, int retain) {
-	
+bool MQTT::publish(const char* topic, const char* buf, uint32_t buf_len, int qos, int retain)
+{
 	return MQTT_Publish(&mqttClient, topic, buf, buf_len, qos, retain);
 }
 
 bool MQTT::publish(String& topic, String& data, int qos, int retain)
 {
-	return MQTT_Publish(&mqttClient, topic.c_str(), data.c_str(), data.length(), qos, retain);
+	return publish(topic.c_str(), data.c_str(), data.length(), qos, retain);
 }
 
+bool MQTT::publish(String& topic, const char* buf, uint32_t buf_len, int qos, int retain)
+{
+	return publish(topic.c_str(), buf, buf_len, qos, retain);
+}
+
+bool MQTT::publish(const char* topic, String& data, int qos, int retain)
+{
+	return publish(topic, data.c_str(), data.length(), qos, retain);
+}
+
+
+/*
+ */
 bool MQTT::subscribe(const char* topic, uint8_t qos)
 {
 	return MQTT_Subscribe(&mqttClient, (char*)topic, qos);

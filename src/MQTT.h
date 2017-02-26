@@ -44,7 +44,7 @@ extern "C" {
 class MQTT
 {
 public:
-	MQTT(const char* client_id, const char* host, uint32_t port, uint8_t security = 0);
+	MQTT(const char* client_id, const char* host, uint32_t port);
 	~MQTT();
 	
 	void setClientId(const char* client_id);
@@ -56,6 +56,9 @@ public:
 	
 	bool publish(const char* topic, const char* buf, uint32_t buf_len, int qos = 0, int retain = 0);
 	bool publish(String& topic, String& data, int qos = 0, int retain = 0);
+	bool publish(String& topic, const char* buf, uint32_t buf_len, int qos = 0, int retain = 0);
+	bool publish(const char* topic, String& data, int qos = 0, int retain = 0);
+	
 	bool subscribe(const char* topic, uint8_t qos = 0);
 	bool subscribe(const String& topic, uint8_t qos = 0);
 	
