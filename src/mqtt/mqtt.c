@@ -516,6 +516,33 @@ MQTT_Subscribe(MQTT_Client *client, char* topic, uint8_t qos)
 }
 
 /**
+ * @brief  MQTT un-subscibe function.
+ * @param  client: 	MQTT_Client reference
+ * @param  topic:   String topic will un-subscribe
+ * @retval TRUE if success queue
+ */
+BOOL ICACHE_FLASH_ATTR
+MQTT_UnSubscribe(MQTT_Client *client, char* topic)
+{
+	uint8_t dataBuffer[MQTT_BUF_SIZE];
+	uint16_t dataLen;
+	client->mqtt_state.outbound_message = mqtt_msg_unsubscribe(&client->mqtt_state.mqtt_connection,
+															   topic,
+															   &client->mqtt_state.pending_msg_id);
+	INFO("MQTT: queue un-subscribe, topic\"%s\", id: %d\r\n", topic, client->mqtt_state.pending_msg_id);
+	while (QUEUE_Puts(&client->msgQueue, client->mqtt_state.outbound_message->data, client->mqtt_state.outbound_message->length) == -1) {
+		INFO("MQTT: Queue full\r\n");
+		if (QUEUE_Gets(&client->msgQueue, dataBuffer, &dataLen, MQTT_BUF_SIZE) == -1) {
+			INFO("MQTT: Serious buffer error\r\n");
+			return FALSE;
+		}
+	}
+	system_os_post(MQTT_TASK_PRIO, 0, (os_param_t)client);
+	return TRUE;
+}
+
+
+/**
   * @brief  MQTT ping function.
   * @param  client: 	MQTT_Client reference
   * @retval TRUE if success queue
