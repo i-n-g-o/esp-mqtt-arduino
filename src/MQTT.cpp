@@ -103,11 +103,11 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port) :
 	,onMqttDataRawCb(0)
 {
 	// init connections
-	MQTT_InitConnection(&mqttClient, host, port);
+	MQTT_InitConnection(&mqttClient, (uint8_t*)host, port, 0);
 
 	// init client
 	if ( !MQTT_InitClient(&mqttClient, (uint8_t*)client_id, (uint8_t*)"", (uint8_t*)"", 120, 1) ) {
-		INFO("Failed to initialize properly. Check MQTT version.\r\n");
+		MQTT_INFO("Failed to initialize properly. Check MQTT version.\r\n");
 	}
 
 	// init LWT
@@ -128,7 +128,7 @@ MQTT::MQTT(const char* client_id, const char* host, uint32_t port) :
 
 MQTT::~MQTT()
 {
-	mqtt_client_delete(&mqttClient);
+	MQTT_DeleteClient(&mqttClient);
 }
 
 
