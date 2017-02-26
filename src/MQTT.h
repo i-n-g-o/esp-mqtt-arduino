@@ -44,7 +44,7 @@ extern "C" {
 class MQTT
 {
 public:
-	MQTT(const char* client_id, const char* host, uint32_t port);
+	MQTT(const char* client_id, const char* host, uint32_t port, uint8_t security = 0);
 	~MQTT();
 	
 	void setClientId(const char* client_id);

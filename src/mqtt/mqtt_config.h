@@ -1,7 +1,7 @@
 #ifndef __MQTT_CONFIG_H__
 #define __MQTT_CONFIG_H__
 
-//#define MQTT_SSL_ENABLE
+#define MQTT_SSL_ENABLE
 
 /*DEFAULT CONFIGURATIONS*/
 
