@@ -8,8 +8,8 @@ void myConnectedCb();
 
 #define CLIENT_ID "client1"
 
-// create MQTT object
-MQTT myMqtt(CLIENT_ID, "192.168.0.1", 1883);
+// create SSL enabled MQTT object
+MQTT myMqtt(CLIENT_ID, "192.168.0.1", 1883, 1);
 
 //
 const char* ssid     = "ssid";
